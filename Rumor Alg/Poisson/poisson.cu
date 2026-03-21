@@ -44,9 +44,18 @@ __global__ void addPoissonNoise(unsigned char *img, curandState *state,
     state[idx] = localState;
 }
 
-int main()
+int main(int argc,char *argv[])
 {
-    cv::Mat image = cv::imread("input_poisson.png", cv::IMREAD_GRAYSCALE);
+    if(argc<2) 
+    {
+        printf("ERRORE : argument must be <input image.png>");
+        return;
+    }
+    char path[64];
+    snprintf(path,sizeof(path),"..\\..\\image\\%s",argv[1]);
+    // carica immagine
+    cv::Mat image = cv::imread(path,cv::IMREAD_GRAYSCALE);
+
     if (image.empty()) { std::cout << "Errore caricamento immagine\n"; return -1; }
 
     int width = image.cols;

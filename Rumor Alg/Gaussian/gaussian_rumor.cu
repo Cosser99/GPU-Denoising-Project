@@ -45,10 +45,18 @@ __global__ void addGaussianNoiseGray(unsigned char *img,
     state[idx] = localState;
 }
 
-int main()
+int main(int argc,char *argv[])
 {
+   
+    if(argc<2) 
+    {
+        printf("ERRORE : argument must be <input image.png>");
+        return;
+    }
+    char path[64];
+    snprintf(path,sizeof(path),"..\\..\\image\\%s",argv[1]);
     // carica immagine
-    cv::Mat image = cv::imread("input.png");
+    cv::Mat image = cv::imread(path);
 
     if (image.empty())
     {

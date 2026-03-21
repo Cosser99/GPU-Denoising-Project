@@ -61,13 +61,15 @@ __global__ void bilateralFilterKernel(
 
 int main(int argc, char** argv)
 {
-    if (argc < 2)
+    if(argc<5) 
     {
-        std::cout << "Usage: ./bilateral_cuda image.jpg\n";
-        return -1;
+        printf("ERRORE : argument must be <input image.png> <radius> <sigma spatial> <sigma range> ");
+        return;
     }
-
-    cv::Mat img = cv::imread(argv[1]);
+    char path[64];
+    snprintf(path,sizeof(path),"..\\..\\image\\%s",argv[1]);
+    // carica immagine
+    cv::Mat img = cv::imread(path,cv::IMREAD_GRAYSCALE);
 
     if (img.empty())
     {
@@ -93,9 +95,9 @@ int main(int argc, char** argv)
     dim3 grid((width + BLOCK_SIZE - 1) / BLOCK_SIZE,
               (height + BLOCK_SIZE - 1) / BLOCK_SIZE);
 
-    int radius = 3;
-    float sigma_spatial = 3.0f;
-    float sigma_range = 25.0f;
+    int radius = atoi(argv[2]);
+    float sigma_spatial = atoi(argv[3]);
+    float sigma_range = atoi(argv[4]);
 
     bilateralFilterKernel<<<grid, block>>>(
         d_input,

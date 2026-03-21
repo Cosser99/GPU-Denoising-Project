@@ -55,10 +55,17 @@ __global__ void meanKernel(unsigned char *in, unsigned char *out, int width, int
 int main(int argc,char *argv[])
 {
     int size;
-    printf("Argomento : %s",argv[1]);
-    printf("Inserisci size: ");
-    scanf("%d",&size);
-       cv::Mat img = cv::imread(argv[1], cv::IMREAD_GRAYSCALE);
+
+    if(argc<3) 
+    {
+        printf("ERRORE : argument must be <input image.png> <size mean window>");
+        return;
+    }
+    char path[64];
+    snprintf(path,sizeof(path),"..\\..\\image\\%s",argv[1]);
+    // carica immagine
+    cv::Mat img = cv::imread(path,cv::IMREAD_GRAYSCALE);
+    
     if(img.empty()) { 
         std::cerr << "Errore: immagine non trovata!" << std::endl;
         return -1;

@@ -3,6 +3,11 @@
 #include <cufft.h>
 #include <iostream>
 
+//
+//
+//              WRONG FILE
+//
+//
 __global__ void gaussianFilter(cufftComplex* data,int w,int h,float sigma)
 {
     int x = blockIdx.x*blockDim.x + threadIdx.x;
@@ -44,15 +49,20 @@ __global__ void fftShift(cufftComplex* data,int w,int h)
     data[i2] = tmp;
 }
 // Compiler : compfft.bat
-int main()
+int main(int argc,char **argv)
 {
-    std::cout<<"FFT Denoiser\n";
-
-    cv::Mat img = cv::imread("input.png",cv::IMREAD_GRAYSCALE);
-
-    if(img.empty())
+     if(argc<2) 
     {
-        std::cout<<"Errore caricamento immagine\n";
+        printf("ERRORE : argument must be <input image.png>");
+        return;
+    }
+    char path[64];
+    snprintf(path,sizeof(path),"..\\..\\image\\%s",argv[1]);
+    // carica immagine
+    cv::Mat img = cv::imread(path,cv::IMREAD_GRAYSCALE);
+    
+    if(img.empty()) { 
+        std::cerr << "Errore: immagine non trovata!" << std::endl;
         return -1;
     }
 

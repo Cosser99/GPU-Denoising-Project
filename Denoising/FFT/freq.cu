@@ -115,8 +115,21 @@ __global__ void idft2D(GPUComplex* input, float* output, int width, int height)
 
 int main(int argc,char** argv)
 {
-    printf("Init program");
-    Mat img = imread("input.png", IMREAD_GRAYSCALE);
+   if(argc<2) 
+    {
+        printf("ERRORE : argument must be <input image.png>");
+        return;
+    }
+    char path[64];
+    snprintf(path,sizeof(path),"..\\..\\image\\%s",argv[1]);
+    // carica immagine
+    cv::Mat img = cv::imread(path,cv::IMREAD_GRAYSCALE);
+    
+    if(img.empty()) { 
+        std::cerr << "Errore: immagine non trovata!" << std::endl;
+        return -1;
+    }
+
 
     int w = img.cols;
     int h = img.rows;

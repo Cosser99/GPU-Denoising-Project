@@ -13,15 +13,31 @@ static void help(char ** argv)
         <<  "Usage:"                                                                      << endl
         << argv[0] << " [image_name -- default lena.jpg]" << endl << endl;
 }
+
+
+//
+//
+//          FILE GIUSTO
+//
+//
 int main(int argc, char ** argv)
 {
-    help(argv);
-    const char* filename = argc >=2 ? argv[1] : "lena.jpg";
-    Mat I = imread( samples::findFile( filename ), IMREAD_GRAYSCALE);
-    if( I.empty()){
-        cout << "Error opening image" << endl;
-        return EXIT_FAILURE;
+
+     if(argc<3) 
+    {
+        printf("ERRORE : argument must be <input image.png> <radius>");
+        return;
     }
+    char path[64];
+    snprintf(path,sizeof(path),"..\\..\\image\\%s",argv[1]);
+    // carica immagine
+    cv::Mat I = cv::imread(path,cv::IMREAD_GRAYSCALE);
+    
+    if(I.empty()) { 
+        std::cerr << "Errore: immagine non trovata!" << std::endl;
+        return -1;
+    }
+
     Mat padded;                            //expand input image to optimal size
     int m = getOptimalDFTSize( I.rows );
     int n = getOptimalDFTSize( I.cols ); // on the border add zero values

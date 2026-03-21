@@ -79,9 +79,20 @@ void gaussianVertical(float* input, float* output,
 //---------------------------------------------
 int main(int argc,char *argv[])
 {
-    printf("Gaussian Blur CUDA\n");
-
-    cv::Mat img = cv::imread(argv[1], cv::IMREAD_GRAYSCALE);
+    if(argc<4) 
+    {
+        printf("ERRORE : argument must be <input image.png> <k> <sigma> ");
+        return;
+    }
+    char path[64];
+    snprintf(path,sizeof(path),"..\\..\\image\\%s",argv[1]);
+    // carica immagine
+    cv::Mat img = cv::imread(path,cv::IMREAD_GRAYSCALE);
+    
+    if(img.empty()) { 
+        std::cerr << "Errore: immagine non trovata!" << std::endl;
+        return -1;
+    }
 
     if(img.empty())
     {
@@ -95,8 +106,8 @@ int main(int argc,char *argv[])
     int width = img.cols;
     int height = img.rows;
 
-    int k = 7;
-    float sigma = 1.5f;
+    int k = atoi(argv[2]);
+    float sigma = atoi(argv[3]);
 
     int pixels = width * height;
 
@@ -151,9 +162,13 @@ int main(int argc,char *argv[])
     // Kernel launch
     //---------------------------------------------
     printf("Processing image");
+    /*
     for(int passi=20;passi>0;passi--)
     {
-    gaussianHorizontal<<<grid, block>>>(
+ 
+    }
+    */
+       gaussianHorizontal<<<grid, block>>>(
         d_input, d_temp, d_kernel,
         width, height, k);
 
@@ -162,7 +177,6 @@ int main(int argc,char *argv[])
         width, height, k);
     cudaDeviceSynchronize();
     cudaMemcpy(d_input,d_output,pixels*sizeof(float),cudaMemcpyDeviceToDevice);
-    }
     //---------------------------------------------
     // Copia risultato
     //---------------------------------------------
