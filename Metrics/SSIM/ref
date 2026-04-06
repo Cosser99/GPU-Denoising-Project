@@ -1,0 +1,19 @@
+import cv2
+from skimage.metrics import structural_similarity as ssim
+
+# carica immagini
+img1 = cv2.imread("..\\..\\Image\\lenna.png", cv2.IMREAD_GRAYSCALE)
+img2 = cv2.imread("..\\..\\Image\\Gaussian.png", cv2.IMREAD_GRAYSCALE)
+
+# calcolo SSIM
+#score, _ = ssim(img1, img2, full=True)
+score, _ = ssim(img1, img2, full=True, win_size=11, gaussian_weights=True, sigma=1.5)
+
+print("SSIM:", score)
+
+
+####################################################################
+#   Script di riferimento per vedere se le metriche sono giuste
+#   Errore : +- 0.001-0.01
+#
+####################################################################
