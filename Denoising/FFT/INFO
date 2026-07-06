@@ -1,3 +1,0 @@
-compile fft_denoised.cu fft.exe
-
-fft.exe gaussnoise.png 160
