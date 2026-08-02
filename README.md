@@ -18,6 +18,13 @@ Ogni backend definisce gli stessi simboli C++ (`idl::MeanFilter`, `idl::Gaussian
 via), quindi le librerie dei backend sono mutuamente esclusive nello stesso eseguibile. Il
 benchmark confronterà eseguibili separati, che produrranno risultati CSV nello stesso formato.
 
+## Installing in Windows (with Docker)
+Download Docker Desktop , in the folder execute the following command:
+```
+docker build -t cuda-cpp .
+docker image
+docker run -it --gpus all -v "%cd%:/workspace" cuda-dev
+```
 ## CMake
 
 ```bash
