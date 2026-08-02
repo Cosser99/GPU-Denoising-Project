@@ -1,0 +1,9 @@
+CREATE IMAGE
+docker build -t cuda-cpp .
+
+LIST IMAGE
+docker image
+
+RUN IMAGE
+
+docker run -it --gpus all -v "%cd%:/workspace" cuda-dev
