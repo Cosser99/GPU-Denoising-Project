@@ -32,7 +32,17 @@ cmake -S . -B build
 cmake --build build
 ```
 
-Target già disponibili:
+## Using NSIGHT
+Check that nsight is installed correctly:
+```
+nsys --version
+```
+```
+nsys profile -o /workspace/my_profile --force-overwrite true ./<applicative_name> <argument> 
+```
+Open Nsight v2026.4.1 and drag n drop the profile file
+
+## Target già disponibili:
 
 - `idl_core`: immagine, errori e I/O comuni;
 - `idl_filters_cpu`: tutte le implementazioni CPU;
