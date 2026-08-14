@@ -7,3 +7,18 @@ docker image
 RUN IMAGE
 
 docker run -it --gpus all -v "%cd%:/workspace" cuda-dev
+
+or 
+
+docker run -it --gpus all -v "%cd%:/workspace" cuda-cpp
+
+
+TO USE NSIGHT
+
+nsys --version
+
+nsys profile \
+    -o /workspace/my_profile \
+    ./my_program
+    
+Open NSIGHT System in PC HOST and select the profile file created
