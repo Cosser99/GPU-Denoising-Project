@@ -158,7 +158,7 @@ namespace idl
         cudaEventRecord(kernelStart);
         bilateralFilterKernel<<<grid, block>>>(deviceInput, deviceOutput, deviceDomainWeights, input.width(), input.height(),
                                                 input.nChannels(), radius, kernelSize, rangeFactor);
-        cudaEventRecord(kernelEnd);
+        cudaDeviceSynchronize();cudaEventRecord(kernelEnd);
         cudaCheckErrors("kernel launch failure");
 
         // copy data from device to host

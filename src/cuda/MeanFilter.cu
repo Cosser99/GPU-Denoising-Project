@@ -118,7 +118,7 @@ namespace idl
         cudaEventRecord(kernelStart);
         meanFilterKernel<<<grid, block>>>(deviceInput, deviceOutput, input.width(), input.height(),
                                           input.nChannels(), _m, _n);
-        cudaEventRecord(kernelEnd);
+        cudaDeviceSynchronize();cudaEventRecord(kernelEnd);
         cudaCheckErrors("kernel launch failure");
 
         // copy data from device to host

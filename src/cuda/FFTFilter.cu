@@ -194,7 +194,7 @@ namespace idl
         // Same operation as the CPU loop that fills transferFunction, but computed on the GPU.
         cudaEventRecord(kernelStart);
         makeTransferFunction<<<paddedGrid, block>>>(deviceTransferFunction, paddedWidth, paddedHeight, _sigma);
-        cudaCheckErrors("transfer function kernel launch failure");
+        cudaDeviceSynchronize();cudaCheckErrors("transfer function kernel launch failure");
 
         cufftHandle plan;
         cufftCheckErrors(cufftPlan2d(&plan, static_cast<int>(paddedHeight), static_cast<int>(paddedWidth), CUFFT_Z2Z));
@@ -208,7 +208,7 @@ namespace idl
             // step 2. making padded image
             makePaddedImage<<<paddedGrid, block>>>(deviceInput, devicePaddedImage, input.width(), input.height(),
                                                    input.nChannels(), channel, paddedWidth, paddedHeight);
-            cudaCheckErrors("padding kernel launch failure");
+            cudaDeviceSynchronize();cudaCheckErrors("padding kernel launch failure");
 
             // Step 4. compute the DFT
             cufftCheckErrors(cufftExecZ2Z(plan, devicePaddedImage, devicePaddedImage, CUFFT_FORWARD));
@@ -225,7 +225,7 @@ namespace idl
                                                         input.nChannels(), channel, paddedWidth, inverseScale,
                                                         static_cast<double>(std::numeric_limits<PixelT>::lowest()),
                                                         static_cast<double>(std::numeric_limits<PixelT>::max()));
-            cudaCheckErrors("extraction kernel launch failure");
+            cudaDeviceSynchronize();cudaCheckErrors("extraction kernel launch failure");
         }
 
         cudaEventRecord(kernelEnd);

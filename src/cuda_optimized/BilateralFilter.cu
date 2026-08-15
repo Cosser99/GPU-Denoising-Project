@@ -184,6 +184,7 @@ namespace idl
         cudaEventRecord(kernelStart);
         bilateralFilterSharedKernel<<<grid, block, tileBytes>>>(deviceInput, deviceOutput, deviceDomainWeights,
                                                                 input.width(), input.height(), input.nChannels(), radius, kernelSize, rangeFactor);
+        cudaDeviceSynchronize();
         cudaEventRecord(kernelEnd);
         cudaCheckErrors("kernel launch failure");
 

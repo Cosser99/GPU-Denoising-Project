@@ -179,6 +179,7 @@ namespace idl
         cudaEventRecord(kernelStart);
         gaussianFilterSharedKernel<<<grid, block, tileBytes>>>(deviceInput, deviceOutput, deviceKernel,
                                                                input.width(), input.height(), input.nChannels(), radius, kernelSize);
+        cudaDeviceSynchronize();
         cudaEventRecord(kernelEnd);
         cudaCheckErrors("kernel launch failure");
 

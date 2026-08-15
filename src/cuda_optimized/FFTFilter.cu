@@ -187,6 +187,7 @@ namespace idl
         // Same operation as the CPU loop that fills transferFunction, but computed on the GPU.
         cudaEventRecord(kernelStart);
         makeTransferFunction<<<paddedGrid, block>>>(deviceTransferFunction, paddedWidth, paddedHeight, _sigma);
+        cudaDeviceSynchronize();
         cudaCheckErrors("transfer function kernel launch failure");
 
         int dimensions[2] = {static_cast<int>(paddedHeight), static_cast<int>(paddedWidth)};
@@ -200,6 +201,7 @@ namespace idl
         // prepare all channels in a single 3D grid.
         makePaddedImage<<<channelPaddedGrid, block>>>(deviceInput, devicePaddedImage, input.width(), input.height(),
                                                              input.nChannels(), paddedWidth, paddedHeight, paddedSize);
+        cudaDeviceSynchronize();
         cudaCheckErrors("padding kernel launch failure");
 
         // Step 4. compute the DFT
@@ -211,6 +213,7 @@ namespace idl
         // Step 6. element wise multiplication H(u,v) x F(u, v) = G(u, v)
         multiplyTransferFunction<<<multiplyGrid, multiplyBlock>>>(devicePaddedImage, deviceTransferFunction,
                                                                    paddedSize, input.nChannels());
+        cudaDeviceSynchronize();
         cudaCheckErrors("transfer multiplication kernel launch failure");
 
         // step 7. filtered image is IDFT(G)
@@ -224,6 +227,8 @@ namespace idl
                                                            1.0 / static_cast<double>(paddedSize),
                                                            static_cast<double>(std::numeric_limits<PixelT>::lowest()),
                                                            static_cast<double>(std::numeric_limits<PixelT>::max()));
+        
+        cudaDeviceSynchronize();
         cudaCheckErrors("extraction kernel launch failure");
 
         cudaEventRecord(kernelEnd);

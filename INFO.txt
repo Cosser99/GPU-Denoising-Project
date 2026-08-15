@@ -12,6 +12,15 @@ or
 
 docker run -it --gpus all -v "%cd%:/workspace" cuda-cpp
 
+----------------------------------------------------
+BUILD SRC
+
+cmake -S . -B build
+cmake --build build
+
+
+----------------------------------------------------
+
 
 TO USE NSIGHT
 
@@ -22,3 +31,5 @@ nsys profile \
     ./my_program
     
 Open NSIGHT System in PC HOST and select the profile file created
+
+nsys profile -o /workspace/my_profile --force-overwrite true ./denoising_benchmark_cuda_optimized lena.jpg mean 
