@@ -1,1 +1,0 @@
-bilateral.exe gaussnoise.png 3 5 25
