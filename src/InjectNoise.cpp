@@ -118,6 +118,8 @@ int main(int argc, char* argv[])
     const std::string imagePath = argv[1];
     const std::string sourcePath = inputPath(imagePath);
 
+    std::cout << sourcePath;
+
     try
     {
         const Image image = idl::ImageIO::load(sourcePath);

@@ -179,7 +179,6 @@ namespace idl
         cudaEventRecord(kernelStart);
         gaussianFilterSharedKernel<<<grid, block, tileBytes>>>(deviceInput, deviceOutput, deviceKernel,
                                                                input.width(), input.height(), input.nChannels(), radius, kernelSize);
-        cudaDeviceSynchronize();
         cudaEventRecord(kernelEnd);
         cudaCheckErrors("kernel launch failure");
 
@@ -192,7 +191,7 @@ namespace idl
         cudaEventElapsedTime(&h2dMs, h2dStart, h2dEnd); cudaEventElapsedTime(&kernelMs, kernelStart, kernelEnd);
         cudaEventElapsedTime(&d2hMs, d2hStart, d2hEnd); cudaEventElapsedTime(&deviceTotalMs, h2dStart, d2hEnd);
         cudaCheckErrors("cudaEventElapsedTime failure");
-        this->setGpuTiming({true, h2dMs, kernelMs, d2hMs, deviceTotalMs});
+        this->setFilterTiming({h2dMs, kernelMs, d2hMs, deviceTotalMs});
         cudaEventDestroy(h2dStart); cudaEventDestroy(h2dEnd); cudaEventDestroy(kernelStart);
         cudaEventDestroy(kernelEnd); cudaEventDestroy(d2hStart); cudaEventDestroy(d2hEnd);
         cudaCheckErrors("cudaEventDestroy failure");

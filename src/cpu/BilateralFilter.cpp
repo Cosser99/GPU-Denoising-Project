@@ -1,4 +1,5 @@
 #include "filters/BilateralFilter.h"
+#include "core/Timer.h"
 
 #include <cmath>
 #include <stdexcept>
@@ -22,7 +23,10 @@ namespace idl
     Image<PixelT> BilateralFilter<PixelT>::apply(const Image<PixelT>& input) const
     {
         Image<PixelT> output(input.width(), input.height(), input.nChannels());
-
+        
+        Timer timer;
+        timer.start();
+        
         const int32_t width = static_cast<int32_t>(input.width());
         const int32_t height = static_cast<int32_t>(input.height());
         const uint8_t nChannels = input.nChannels();
@@ -104,6 +108,14 @@ namespace idl
                 }
             }
         }
+
+        timer.stop();
+        this->setFilterTiming({
+            0.0,
+            0.0,
+            0.0,
+            timer.elapsedMs()
+        });
 
         return output;
     }

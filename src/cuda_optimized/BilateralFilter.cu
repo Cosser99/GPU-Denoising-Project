@@ -106,7 +106,7 @@ namespace
 
                     // total weight is the multiplication of domain weight and range weight
                     // range weight is distance^2 * rangeFactor (as domain weight but with colors distance instead of geometric distance)
-                    const double weight = domainWeights[(ky + radius) * kernelSize + kx + radius] * exp(colorDistanceSquared * rangeFactor);
+                    const double weight = domainWeights[(ky + radius) * kernelSize + kx + radius] * __expf(colorDistanceSquared * rangeFactor);
                     weightSum += weight;
                     sum += weight * static_cast<double>(tile[(static_cast<size_t>(localY) * tileWidth + localX) * nChannels + channel]);
                 }
@@ -184,7 +184,6 @@ namespace idl
         cudaEventRecord(kernelStart);
         bilateralFilterSharedKernel<<<grid, block, tileBytes>>>(deviceInput, deviceOutput, deviceDomainWeights,
                                                                 input.width(), input.height(), input.nChannels(), radius, kernelSize, rangeFactor);
-        cudaDeviceSynchronize();
         cudaEventRecord(kernelEnd);
         cudaCheckErrors("kernel launch failure");
 
@@ -197,7 +196,7 @@ namespace idl
         cudaEventElapsedTime(&h2dMs, h2dStart, h2dEnd); cudaEventElapsedTime(&kernelMs, kernelStart, kernelEnd);
         cudaEventElapsedTime(&d2hMs, d2hStart, d2hEnd); cudaEventElapsedTime(&deviceTotalMs, h2dStart, d2hEnd);
         cudaCheckErrors("cudaEventElapsedTime failure");
-        this->setGpuTiming({true, h2dMs, kernelMs, d2hMs, deviceTotalMs});
+        this->setFilterTiming({h2dMs, kernelMs, d2hMs, deviceTotalMs});
         cudaEventDestroy(h2dStart); cudaEventDestroy(h2dEnd); cudaEventDestroy(kernelStart);
         cudaEventDestroy(kernelEnd); cudaEventDestroy(d2hStart); cudaEventDestroy(d2hEnd);
         cudaCheckErrors("cudaEventDestroy failure");

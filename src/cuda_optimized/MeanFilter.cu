@@ -82,7 +82,7 @@ namespace
         for (int channel = 0; channel < nChannels; channel++)
         {
             double sum = 0.0;
-            unsigned int count = 0;
+            const unsigned int count = (2 * radiusX + 1) * (2 * radiusY + 1);
 
             for (int ky = -radiusY; ky <= radiusY; ky++)
             {
@@ -91,7 +91,6 @@ namespace
                     const int xx = threadIdx.x + kx + radiusX;
                     const int yy = threadIdx.y + ky + radiusY;
                     sum += static_cast<double>(tile[(static_cast<size_t>(yy) * tileWidth + xx) * nChannels + channel]);
-                    count++;
                 }
             }
             
@@ -169,7 +168,6 @@ namespace idl
         cudaEventRecord(kernelStart);
         meanFilterSharedKernel<<<grid, block, tileBytes>>>(deviceInput, deviceOutput, input.width(), input.height(),
                                                            input.nChannels(), _m, _n);
-        cudaDeviceSynchronize();
         cudaEventRecord(kernelEnd);
         cudaCheckErrors("kernel launch failure");
 
@@ -186,7 +184,7 @@ namespace idl
         cudaEventElapsedTime(&d2hMs, d2hStart, d2hEnd);
         cudaEventElapsedTime(&deviceTotalMs, h2dStart, d2hEnd);
         cudaCheckErrors("cudaEventElapsedTime failure");
-        this->setGpuTiming({true, h2dMs, kernelMs, d2hMs, deviceTotalMs});
+        this->setFilterTiming({h2dMs, kernelMs, d2hMs, deviceTotalMs});
         cudaEventDestroy(h2dStart);
         cudaEventDestroy(h2dEnd);
         cudaEventDestroy(kernelStart);

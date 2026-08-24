@@ -53,10 +53,10 @@ namespace
                << std::fixed << std::setprecision(6)
                << result.executionTimeMs << ','
                << result.throughputMPs << ','
-               << result.gpuTiming.hostToDeviceMs << ','
-               << result.gpuTiming.kernelMs << ','
-               << result.gpuTiming.deviceToHostMs << ','
-               << result.gpuTiming.deviceTotalMs << ','
+               << result.filterTiming.hostToDeviceMs << ','
+               << result.filterTiming.kernelMs << ','
+               << result.filterTiming.deviceToHostMs << ','
+               << result.filterTiming.totalMs << ','
                << result.mse << ','
                << result.psnr << ','
                << result.mssim << '\n';
@@ -99,7 +99,7 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    output << "backend,noise,filter,execution_time_ms,throughput_mps,h2d_ms,kernel_ms,d2h_ms,device_total_ms,mse,psnr,mssim\n";
+    output << "backend,noise,filter,execution_time_ms,throughput_mps,h2d_ms,kernel_ms,d2h_ms,filter_total_ms,mse,psnr,mssim\n";
 
     std::vector<NoiseScenario> noises;
     noises.push_back({"poisson_05", std::make_unique<idl::PoissonNoise<uint8_t>>(0.5, 1403)});

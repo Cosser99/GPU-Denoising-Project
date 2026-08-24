@@ -20,19 +20,19 @@ namespace idl
             virtual std::string name() const = 0;
             virtual Architecture arch() const = 0;
 
-            GpuTiming gpuTiming() const
+            FilterTiming filterTiming() const
             {
-                return _gpuTiming;
+                return _filterTiming;
             }
 
         protected:
-            void setGpuTiming(const GpuTiming& timing) const
+            void setFilterTiming(const FilterTiming& timing) const
             {
-                _gpuTiming = timing;
+                _filterTiming = timing;
             }
 
         private:
-            mutable GpuTiming _gpuTiming{};
+            mutable FilterTiming _filterTiming{};
     };
 
     using ByteFilter = Filter<uint8_t>;

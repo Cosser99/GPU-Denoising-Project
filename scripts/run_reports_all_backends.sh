@@ -12,7 +12,8 @@ RUN_BENCHMARKS="${ROOT_DIR}/scripts/run_benchmarks_all_clean.sh"
 repetitions="${1:-100}"
 filter_group="${2:-all}"
 
-for backend in cpu cuda cuda_optimized
+# for backend in cpu cuda cuda_optimized
+for backend in cuda cuda_optimized
 do
     echo
     echo "Running ${backend} report..."

@@ -170,7 +170,7 @@ namespace idl
         cudaEventElapsedTime(&deviceTotalMs, h2dStart, d2hEnd);
         cudaCheckErrors("cudaEventElapsedTime failure");
         
-        this->setGpuTiming({true, h2dMs, kernelMs, d2hMs, deviceTotalMs});
+        this->setFilterTiming({h2dMs, kernelMs, d2hMs, deviceTotalMs});
         
         // "freeing" events
         cudaEventDestroy(h2dStart);

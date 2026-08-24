@@ -1,4 +1,5 @@
 #include "filters/GaussianFilter.h"
+#include "core/Timer.h"
 
 #include <cmath>
 #include <stdexcept>
@@ -20,6 +21,9 @@ namespace idl
     Image<PixelT> GaussianFilter<PixelT>::apply(const Image<PixelT>& input) const
     {
         Image<PixelT> output(input.width(), input.height(), input.nChannels());
+        
+        Timer timer;
+        timer.start();
 
         const int32_t radius = static_cast<int32_t>(std::ceil(3.0 * _sigma));
         const uint32_t kernelSize = 2 * radius + 1;
@@ -83,6 +87,15 @@ namespace idl
                 }
             }
         }
+
+        timer.stop();
+        this->setFilterTiming({
+            0.0,
+            0.0,
+            0.0,
+            timer.elapsedMs()
+        });
+
         return output;
     }
 

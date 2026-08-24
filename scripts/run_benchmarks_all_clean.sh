@@ -17,15 +17,12 @@ REPORT_DIR="${ROOT_DIR}/reports"
 
 case "${backend}" in
     cpu)
-        target="denoising_benchmark_cpu"
         executable="${BUILD_DIR}/denoising_benchmark_cpu"
         ;;
     cuda)
-        target="denoising_benchmark_cuda_reference"
         executable="${BUILD_DIR}/denoising_benchmark_cuda_reference"
         ;;
     cuda_optimized)
-        target="denoising_benchmark_cuda_optimized"
         executable="${BUILD_DIR}/denoising_benchmark_cuda_optimized"
         ;;
     *)
@@ -35,8 +32,13 @@ case "${backend}" in
         ;;
 esac
 
-cmake -S "${ROOT_DIR}" -B "${BUILD_DIR}"
-cmake --build "${BUILD_DIR}" --target "${target}"
+cmake -S "${ROOT_DIR}" -B build \
+    -DCMAKE_CXX_COMPILER=/usr/bin/g++ \
+    -DCMAKE_CUDA_COMPILER=/usr/local/cuda-12.1/bin/nvcc \
+    -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++ \
+    -DCUDAToolkit_ROOT=/usr/local/cuda-12.1 \
+    -DCMAKE_CUDA_ARCHITECTURES=86
+cmake --build build --parallel
 
 count=0
 while IFS= read -r -d '' image_path

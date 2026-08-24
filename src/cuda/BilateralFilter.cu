@@ -60,7 +60,7 @@ namespace
                     for (int colorChannel = 0; colorChannel < nChannels; colorChannel++)
                     {
                         const double difference = static_cast<double>(input[(static_cast<size_t>(yy) * width + xx) * nChannels + colorChannel]) -
-                                                  static_cast<double>(input[(static_cast<size_t>(yy) * width + xx) * nChannels + colorChannel]);
+                                                  static_cast<double>(input[(static_cast<size_t>(idy) * width + idx) * nChannels + colorChannel]);
                         colorDistanceSquared += difference * difference;
                     }
 
@@ -158,7 +158,7 @@ namespace idl
         cudaEventRecord(kernelStart);
         bilateralFilterKernel<<<grid, block>>>(deviceInput, deviceOutput, deviceDomainWeights, input.width(), input.height(),
                                                 input.nChannels(), radius, kernelSize, rangeFactor);
-        cudaDeviceSynchronize();cudaEventRecord(kernelEnd);
+        cudaEventRecord(kernelEnd);
         cudaCheckErrors("kernel launch failure");
 
         // copy data from device to host
@@ -175,7 +175,7 @@ namespace idl
         cudaEventElapsedTime(&deviceTotalMs, h2dStart, d2hEnd);
         cudaCheckErrors("cudaEventElapsedTime failure");
         
-        this->setGpuTiming({true, h2dMs, kernelMs, d2hMs, deviceTotalMs});
+        this->setFilterTiming({h2dMs, kernelMs, d2hMs, deviceTotalMs});
         
         // "freeing" events
         cudaEventDestroy(h2dStart);

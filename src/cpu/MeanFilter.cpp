@@ -1,4 +1,5 @@
 #include "filters/MeanFilter.h"
+#include "core/Timer.h"
 
 #include <algorithm>
 #include <cmath>
@@ -16,6 +17,9 @@ namespace idl
     Image<PixelT> MeanFilter<PixelT>::apply(const Image<PixelT>& input) const
     {
         Image<PixelT> output(input.width(), input.height(), input.nChannels());
+        
+        Timer timer;
+        timer.start();
         
         const int32_t radiusX = static_cast<int32_t>(_m);
         const int32_t radiusY = static_cast<int32_t>(_n);
@@ -58,6 +62,14 @@ namespace idl
                 }
             }
         }
+
+        timer.stop();
+        this->setFilterTiming({
+            0.0,
+            0.0,
+            0.0,
+            timer.elapsedMs()
+        });
 
         return output;
     }

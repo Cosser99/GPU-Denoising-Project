@@ -118,7 +118,7 @@ namespace idl
         cudaEventRecord(kernelStart);
         meanFilterKernel<<<grid, block>>>(deviceInput, deviceOutput, input.width(), input.height(),
                                           input.nChannels(), _m, _n);
-        cudaDeviceSynchronize();cudaEventRecord(kernelEnd);
+        cudaEventRecord(kernelEnd);
         cudaCheckErrors("kernel launch failure");
 
         // copy data from device to host
@@ -135,7 +135,7 @@ namespace idl
         cudaEventElapsedTime(&deviceTotalMs, h2dStart, d2hEnd);
         cudaCheckErrors("cudaEventElapsedTime failure");
         
-        this->setGpuTiming({true, h2dMs, kernelMs, d2hMs, deviceTotalMs});
+        this->setFilterTiming({h2dMs, kernelMs, d2hMs, deviceTotalMs});
         
         // "freeing" events
         cudaEventDestroy(h2dStart);

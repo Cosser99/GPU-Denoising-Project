@@ -31,21 +31,19 @@ namespace idl
         BenchmarkResult results{};
         const double imageMegapixels = static_cast<double>(input.width()) * input.height() / 1.0e6;
         Image<PixelT> output;
-        GpuTiming totalGpuTiming{};
+        FilterTiming totalFilterTiming{};
 
         timer.start();
         for (uint32_t iteration = 0; iteration < repetitions; ++iteration)
         {
             output = filter.apply(input);
-            const GpuTiming gpuTiming = filter.gpuTiming();
-            if (gpuTiming.available)
-            {
-                totalGpuTiming.available = true;
-                totalGpuTiming.hostToDeviceMs += gpuTiming.hostToDeviceMs;
-                totalGpuTiming.kernelMs += gpuTiming.kernelMs;
-                totalGpuTiming.deviceToHostMs += gpuTiming.deviceToHostMs;
-                totalGpuTiming.deviceTotalMs += gpuTiming.deviceTotalMs;
-            }
+            const FilterTiming filterTiming = filter.filterTiming();
+            
+            totalFilterTiming.hostToDeviceMs += filterTiming.hostToDeviceMs;
+            totalFilterTiming.kernelMs += filterTiming.kernelMs;
+            totalFilterTiming.deviceToHostMs += filterTiming.deviceToHostMs;
+            totalFilterTiming.totalMs += filterTiming.totalMs;
+            
         }
         timer.stop();
         results.filterName = filter.name();
@@ -57,14 +55,13 @@ namespace idl
         results.mse = Metrics<PixelT>::computeMSE(original, output);
         results.psnr = Metrics<PixelT>::computePSNR(original, output);
         results.mssim = Metrics<PixelT>::computeMSSIM(original, output);
-        if (totalGpuTiming.available)
-        {
-            totalGpuTiming.hostToDeviceMs /= repetitions;
-            totalGpuTiming.kernelMs /= repetitions;
-            totalGpuTiming.deviceToHostMs /= repetitions;
-            totalGpuTiming.deviceTotalMs /= repetitions;
-        }
-        results.gpuTiming = totalGpuTiming;
+        
+        totalFilterTiming.hostToDeviceMs /= repetitions;
+        totalFilterTiming.kernelMs /= repetitions;
+        totalFilterTiming.deviceToHostMs /= repetitions;
+        totalFilterTiming.totalMs /= repetitions;
+        
+        results.filterTiming = totalFilterTiming;
         return results;
     }
 }

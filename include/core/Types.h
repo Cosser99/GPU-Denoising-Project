@@ -10,13 +10,12 @@ namespace idl // image denoising library
         GPU
     };
 
-    struct GpuTiming
+    struct FilterTiming
     {
-        bool available = false;
         double hostToDeviceMs = 0.0;
         double kernelMs = 0.0;
         double deviceToHostMs = 0.0;
-        double deviceTotalMs = 0.0;
+        double totalMs = 0.0;
     };
 
     struct BenchmarkResult
@@ -28,6 +27,6 @@ namespace idl // image denoising library
         double mse;
         double psnr;
         double mssim;
-        GpuTiming gpuTiming;
+        FilterTiming filterTiming;
     };
 } // namespace

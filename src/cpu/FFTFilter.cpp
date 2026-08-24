@@ -3,6 +3,7 @@
 // this algorithm follows the steps of the book cited in the abstract
 
 #include "filters/FFTFilter.h"
+#include "core/Timer.h"
 
 #include <algorithm>
 #include <cmath>
@@ -145,6 +146,10 @@ namespace idl
     Image<PixelT> FFTFilter<PixelT>::apply(const Image<PixelT>& input) const
     {
         Image<PixelT> output(input.width(), input.height(), input.nChannels());
+        
+        Timer timer;
+        timer.start();
+
         if (input.width() == 0 || input.height() == 0 || input.nChannels() == 0)
         {
             return output;
@@ -234,6 +239,15 @@ namespace idl
                 }
             }
         }
+
+        timer.stop();
+        this->setFilterTiming({
+            0.0,
+            0.0,
+            0.0,
+            timer.elapsedMs()
+        });
+
         return output;
     }
 

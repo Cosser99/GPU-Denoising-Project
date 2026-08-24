@@ -194,7 +194,7 @@ namespace idl
         // Same operation as the CPU loop that fills transferFunction, but computed on the GPU.
         cudaEventRecord(kernelStart);
         makeTransferFunction<<<paddedGrid, block>>>(deviceTransferFunction, paddedWidth, paddedHeight, _sigma);
-        cudaDeviceSynchronize();cudaCheckErrors("transfer function kernel launch failure");
+        cudaCheckErrors("transfer function kernel launch failure");
 
         cufftHandle plan;
         cufftCheckErrors(cufftPlan2d(&plan, static_cast<int>(paddedHeight), static_cast<int>(paddedWidth), CUFFT_Z2Z));
@@ -208,7 +208,7 @@ namespace idl
             // step 2. making padded image
             makePaddedImage<<<paddedGrid, block>>>(deviceInput, devicePaddedImage, input.width(), input.height(),
                                                    input.nChannels(), channel, paddedWidth, paddedHeight);
-            cudaDeviceSynchronize();cudaCheckErrors("padding kernel launch failure");
+            cudaCheckErrors("padding kernel launch failure");
 
             // Step 4. compute the DFT
             cufftCheckErrors(cufftExecZ2Z(plan, devicePaddedImage, devicePaddedImage, CUFFT_FORWARD));
@@ -225,7 +225,7 @@ namespace idl
                                                         input.nChannels(), channel, paddedWidth, inverseScale,
                                                         static_cast<double>(std::numeric_limits<PixelT>::lowest()),
                                                         static_cast<double>(std::numeric_limits<PixelT>::max()));
-            cudaDeviceSynchronize();cudaCheckErrors("extraction kernel launch failure");
+            cudaCheckErrors("extraction kernel launch failure");
         }
 
         cudaEventRecord(kernelEnd);
@@ -237,12 +237,12 @@ namespace idl
         cudaEventSynchronize(d2hEnd);
         cudaCheckErrors("cudaMemcpy D2H failure");
 
-        float h2dMs, kernelMs, d2hMs, deviceTotalMs;
+        float h2dMs, kernelMs, d2hMs, totalMs;
         cudaEventElapsedTime(&h2dMs, h2dStart, h2dEnd); cudaEventElapsedTime(&kernelMs, kernelStart, kernelEnd);
-        cudaEventElapsedTime(&d2hMs, d2hStart, d2hEnd); cudaEventElapsedTime(&deviceTotalMs, h2dStart, d2hEnd);
+        cudaEventElapsedTime(&d2hMs, d2hStart, d2hEnd); cudaEventElapsedTime(&totalMs, h2dStart, d2hEnd);
         cudaCheckErrors("cudaEventElapsedTime failure");
         
-        this->setGpuTiming({true, h2dMs, kernelMs, d2hMs, deviceTotalMs});
+        this->setFilterTiming({h2dMs, kernelMs, d2hMs, totalMs});
         
         // "freeing" events
         cudaEventDestroy(h2dStart);
